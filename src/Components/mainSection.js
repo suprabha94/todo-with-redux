@@ -50,7 +50,7 @@ export class MainSection extends Component {
         todoIds: newTodoIds
       };
       console.log("newColumn",newColumn)
-      this.props.dispatch(orderChange(newColumn,source.droppableId));
+      this.props.orderChange(newColumn,source.droppableId);
     }
   }
 
