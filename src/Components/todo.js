@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import styled from 'styled-components';
-import store from '../store';
-import {Droppable,Draggable } from 'react-beautiful-dnd';
+//import store from '../store';
+import {Draggable } from 'react-beautiful-dnd';
+//import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 const Container = styled.div`
 	border: 1px solid lightgrey;
@@ -13,18 +15,33 @@ const Container = styled.div`
 `;
 
 export default class Todo extends Component{
-  state = store.getState();
+  //state = this.props.State;
+
+	// componentWillReceiveProps(nextProps){
+  //   if(this.state !== nextProps){
+  //     this.setState (nextProps.State);
+  //   }
+  // }
 
   render(){
     return(
       <Draggable draggableId={this.props.todoId} index={this.props.index}>
         {(provided,snapshot) => (
           <Container {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} isDragging = {snapshot.isDragging}>
-            {this.state.todos[this.props.todoId].title}
+						{this.props.State.todos[this.props.todoId].title}
           </Container>
         )}
       </Draggable>
     )
   }
-
 }
+
+Todo.propTypes = {
+  State: PropTypes.object.isRequired
+}
+
+// const mapStateToProps=state=>({
+//   State: state,
+// })
+
+//export default connect(mapStateToProps,null)(Todo);

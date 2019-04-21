@@ -6,12 +6,12 @@ const initialData ={
     'todo-4': {id:'todo-4', title:'Cook dinner', status:'ToDo', completed:false},
   },
   columns: {
-    'ToDo': {id:'ToDo', title: 'TO DO', todoIds: ['todo-1','todo-2','todo-4','todo-3']},
-    'In-progress': {id:'In-progress', title: 'TO DO', todoIds: []},
-    'Done': {id:'Done', title: 'TO DO', todoIds: []},
+    'ToDo': {id:'ToDo', title: 'TO DO', todoIds: ['todo-1','todo-2','todo-3','todo-4']},
+    'In-progress': {id:'In-progress', title: 'In Progress', todoIds: []},
+    Done: {id:'Done', title: 'Done', todoIds: []},
   },
   columnOrder: ['ToDo','In-progress','Done'],
-  
+
 }
 
 export default initialData;

@@ -10,7 +10,13 @@ export const orderChange = (newColumn,columnId) => dispatch => {
   }
 })};
 
-export const columnChange = (newColumns) => dispatch => {dispatch({
+export const columnChange = (newState) => dispatch => {dispatch({
   type: types.CHANGECOLUMN,
-  newColumns: newColumns
+  newState: newState
+})}
+
+export const addTodo = (newTodo, newTodoIds) => dispatch => {dispatch({
+  type: types.ADDTODO,
+  newTodo: newTodo,
+  newTodoIds: newTodoIds
 })}

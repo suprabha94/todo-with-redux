@@ -1,11 +1,11 @@
 import React, {Component} from 'react'
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { DragDropContext } from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import store from '../store';
 import Column from './column';
 import {orderChange, columnChange} from '../Actions/changeOrder';
+//import store from '../store';
 
 const Container = styled.div`  margin: 8px;
   background-color: white;
@@ -14,10 +14,17 @@ const Container = styled.div`  margin: 8px;
   justify-content: center;
   `;
 
-export class MainSection extends Component {
-  state = store.getState();
+class MainSection extends Component {
   constructor(props){
     super(props);
+    this.state = this.props.State;
+
+  }
+
+  componentWillReceiveProps(nextProps){
+    if(this.state !== nextProps){
+      this.setState (nextProps.State);
+    }
   }
 
   onDragStart = (start) => {
@@ -26,8 +33,9 @@ export class MainSection extends Component {
   }
 
   onDragEnd = (result) => {
+
     document.body.style.color = 'inherit';
-    const {destination, source, draggableId, type} = result;
+    const {destination, source, draggableId} = result;
     if(!destination){
       return;
     }
@@ -40,7 +48,7 @@ export class MainSection extends Component {
 
     //if change order
     if(start === finish){
-      console.log("dragEnd");
+
       const newTodoIds = Array.from(start.todoIds);
       newTodoIds.splice(source.index,1);
       newTodoIds.splice(destination.index,0,draggableId);
@@ -49,9 +57,42 @@ export class MainSection extends Component {
         ...start,
         todoIds: newTodoIds
       };
-      console.log("newColumn",newColumn)
+
+      const newState = {
+        ...this.state,
+        columns: {
+          ...this.columns,
+          [source.droppableId]: newColumn
+        }
+      }
+      this.setState(newState);
       this.props.orderChange(newColumn,source.droppableId);
+      return;
     }
+
+    const startTodoIds = Array.from(start.todoIds);
+    const finishTodoIds = Array.from(finish.todoIds);
+    startTodoIds.splice(source.index,1);
+    finishTodoIds.splice(destination.index,0,draggableId);
+
+    const newColumns = {
+      ...this.state.columns,
+      [source.droppableId]: {
+        ...this.state.columns[source.droppableId],
+        todoIds: startTodoIds
+      },
+      [destination.droppableId]: {
+        ...this.state.columns[destination.droppableId],
+        todoIds: finishTodoIds
+      }
+    }
+
+    const newState = {
+      ...this.state,
+      columns: newColumns
+    }
+    this.setState(newState);
+    this.props.columnChange(newState);
   }
 
   render(){
@@ -59,8 +100,7 @@ export class MainSection extends Component {
       <DragDropContext onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
         <Container>
           {this.state.columnOrder.map((columnId) => {
-            console.log("col id", columnId);
-            return <Column key={columnId} columnId = {columnId}/>;
+            return <Column key={columnId} columnId = {columnId} State={this.state}/>;
           })}
         </Container>
       </DragDropContext>
@@ -68,17 +108,14 @@ export class MainSection extends Component {
   }
 }
 
-// MainSection.propTypes = {
-//   orderChange: PropTypes.func.isRequired,
-//
-// }
+MainSection.propTypes = {
+  orderChange: PropTypes.func.isRequired,
+  State: PropTypes.object.isRequired
+}
 
-// const mapStateToProps=state=>{
-//   console.log(state);
-//   // return {
-//   //   something:state.columns
-//   // }
-// }
+const mapStateToProps=state=>({
+  State: state,
+})
 // const mapDispatchToProps=(dispatch)=>({
 //   Change:(newColumn,Id)=>{
 //     dispatch(orderChange(newColumn,Id))
@@ -86,5 +123,7 @@ export class MainSection extends Component {
 // })
 
 
- export default connect(null, {orderChange})(MainSection);
-//export default connect(mapStateToProps, mapDispatchToProps)(MainSection);
+
+//const sub = store.subscribe();
+export default connect(mapStateToProps, {orderChange,columnChange})(MainSection);
+//export default connect(null, mapDispatchToProps)(MainSection);

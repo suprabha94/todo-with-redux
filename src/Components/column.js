@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import styled from 'styled-components';
-import store from '../store';
-import {Droppable,Draggable } from 'react-beautiful-dnd';
+import {Droppable } from 'react-beautiful-dnd';
+//import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import Todo from './todo';
 
@@ -31,18 +32,27 @@ const TaskList = styled.div`
 
 
 export default class Column extends Component{
-  state = store.getState();
-  todoIds = this.state.columns[this.props.columnId].todoIds;
+  // state = store.getState();
+  //state = this.props.State;
+
+  // componentWillReceiveProps(nextProps){
+  //   if(this.state !== nextProps){
+  //     this.setState (nextProps.State);
+  //   }
+  // }
+
+
   render(){
     return (
       <Container>
         <Title>
-          {this.state.columns[this.props.columnId].title}
+
+          {this.props.State.columns[this.props.columnId].title}
         </Title>
         <Droppable droppableId={this.props.columnId}>
         {(provided,snapshot) => (
           <TaskList {...provided.droppableProps} isDraggingOver={snapshot.isDraggingOver} ref={provided.innerRef}>
-            {this.todoIds.map((todoId,index) =>{return <Todo key = {todoId} todoId = {todoId} index={index}/>} )}
+            {this.props.State.columns[this.props.columnId].todoIds.map((todoId,index) =>{return <Todo key = {todoId} todoId = {todoId} index={index} State={this.props.State}/>} )}
             {provided.placeholder}
           </TaskList>
         )}
@@ -51,3 +61,13 @@ export default class Column extends Component{
     )
   }
 }
+
+Column.propTypes = {
+  State: PropTypes.object.isRequired
+}
+
+// const mapStateToProps=state=>({
+//   State: state,
+// })
+
+//export default connect(mapStateToProps,null)(Column);
